@@ -1,0 +1,781 @@
+<html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<style>
+
+@font-face {
+    font-family: 'CreativeBlockBB', sans-serif;
+    src: url('fonts/creabbb-webfont.woff2') format('woff2'),
+         url('fonts/creabbb-webfont.woff') format('woff'),
+		 url('fonts/creabbb-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {background-image: url("../game/images/rooms/_bg_/main_room_day.png");
+	  background-repeat: no-repeat, repeat;
+	  background-color: #cccccc;
+	  background-size: cover;}
+h1   {position:relative;top:-15px;color: blue;}
+
+h5 {position: absolute;right: 10px;top: -15px;color: #FFFFFF;}
+#charimg, #hair-back, #charbody, #mouth, #eyes, #cheeks, #tears, #hair-top, .bodypart {width: 60%;position: absolute;bottom: 0px;right: 0px;}
+#charspeak {position: absolute;bottom: 0px;color: #402313;font-family: 'CreativeBlockBB';font-size: 16px;z-index: -1;}
+
+.container {
+  position: relative;
+  text-align: center;
+}
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#editor {
+	border: 1px solid black;
+	background-repeat: no-repeat, repeat;
+	background-color: #ffffff80;
+	background-size: cover;
+	padding: 15px 15px 15px 15px;
+}
+.input1
+{
+	text-align: left;
+}
+
+.stylized {color: #402313;font-family: 'CreativeBlockBB';font-size: 16px}
+
+.history {
+    /* background: url(http://i.imgur.com/2cOaJ.png); */
+	background-color: #ffffff;
+    background-attachment: local;
+    background-repeat: no-repeat;
+    padding-left: 35px;
+    padding-top: 10px;
+    border-color:#ccc;
+}
+
+#wrapper{background-color: #ccc;border:1px solid black;position:relative;height:500px;width:500px;margin:15px auto;}
+
+</style>
+<link type="text/css" href="tln.min.css" rel="stylesheet">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="tln.min.js"></script>
+</head>
+<title>Expression Editor v0.1 Alpha</title>
+
+<body onload="reload_cache()">
+	<p>
+		<h1 id="char"></h1>	
+		<h5 style="text-align: right;">Expression Editor v0.1 Alpha<br>by Goombah, LoafyLemon</h2>
+	</p>
+
+	<div id="editor" style="position:absolute;margin-left:531px;width:auto;z-index:10;">
+		<p class="stylized">Code output <button type="button" onclick="download()">Save</button> <button type="button" onclick="clear_history()">Clear</button> <button type="button" onclick="copy_code('output')">Copy</button></p>
+		<div id="wrapper">
+			<textarea id="output" rows="20" cols="55" placeholder="Empty..."></textarea>
+		</div>
+	</div>
+
+	<div id="editor" style="position:absolute;margin-left:10px;width:auto;z-index:10;">
+		<select id="select-character">
+			<option value="her">Hermione</option>
+			<option value="ast">Astoria</option>
+			<option value="cho">Cho</option>
+			<option value="ton">Tonks</option>
+			<option value="lun">Luna</option>
+			<option value="sus">Susan</option>
+		</select>
+		<br>
+		<p class="stylized">Text input <button type="button" onclick="commit()">Commit</button><button type="button" onclick="undo_last()">Undo</button></p>
+		<textarea id="input1" class="input" rows="4" cols="60" placeholder="Enter dialogue text here..." style="resize: vertical;" autofocus></textarea>
+		<br>
+		<p class="stylized">Code preview <button type="button" onclick="copy_code('code')">Copy</button></p>
+		<textarea id="code" rows="4" cols="60" placeholder="Waiting for input..." onClick="this.select();" style="resize: vertical;" readonly></textarea>
+		<br>
+		<br>
+		<p id='hermione_buttons'>
+			<span class="stylized">Mouth:</span>
+			<select id="select-mouth-her">
+				<option value="angry">angry</option>
+				<option value="annoyed">annoyed</option>
+				<option value="base">base</option>
+				<option value="clench">clench</option>
+				<option value="crooked_smile">crooked_smile</option>
+				<option value="cum">cum</option>
+				<option value="disgust">disgust</option>
+				<option value="full">full</option>
+				<option value="full_cum">full_cum</option>
+				<option value="gag">gag</option>
+				<option value="grin">grin</option>
+				<option value="mad">mad</option>
+				<option value="mouthpiece">mouthpiece</option>
+				<option value="mouthpiece_drool">mouthpiece_drool</option>
+				<option value="normal">normal</option>
+				<option value="open">open</option>
+				<option value="open_tongue">open_tongue</option>
+				<option value="open_wide_tongue">open_wide_tongue</option>
+				<option value="open_wide_tongue_cum">open_wide_tongue_cum</option>
+				<option value="scream">scream</option>
+				<option value="shock">shock</option>
+				<option value="silly">silly</option>
+				<option value="smile">smile</option>
+				<option value="soft">soft</option>
+			</select>
+			<br>
+			<span class="stylized">Eyes:</span>
+			<select id="select-eyes-her">
+				<option value="ahegao">ahegao</option>
+				<option value="ahegao_mad">ahegao_mad</option>
+				<option value="ahegao_intense">ahegao_intense</option>
+				<option value="ahegao_up">ahegao_up</option>
+				<option value="ahegao_wide">ahegao_wide</option>
+				<option value="ahegao_raised">ahegao_raised</option>
+				<option value="ahegao_squint">ahegao_squint</option>
+				<option value="angryL">angryL</option>
+				<option value="angry">angry</option>
+				<option value="angryCl">angryCl</option>
+				<option value="annoyed">annoyed</option>
+				<option value="base">base</option>
+				<option value="baseL">baseL</option>
+				<option value="closed">closed</option>
+				<option value="concerned">concerned</option>
+				<option value="dead">dead</option>
+				<option value="dead_mad">dead_mad</option>
+				<option value="down">down</option>
+				<option value="down_raised">down_raised</option>
+				<option value="frown">frown</option>
+				<option value="glance">glance</option>
+				<option value="glanceL">glanceL</option>
+				<option value="happy">happy</option>
+				<option value="happyCl">happyCl</option>
+				<option value="hateful">hateful</option>
+				<option value="narrow">narrow</option>
+				<option value="shocked">shocked</option>
+				<option value="shocked_raised">shocked_raised</option>
+				<option value="silly">silly</option>
+				<option value="soft">soft</option>
+				<option value="squint">squint</option>
+				<option value="squintL">squintL</option>
+				<option value="surprised">surprised</option>
+				<option value="suspicious">suspicious</option>
+				<option value="wide">wide</option>
+				<option value="wide_stare">wide_stare</option>
+				<option value="wink">wink</option>
+				<option value="worried">worried</option>
+				<option value="worriedCl">worriedCl</option>
+				<option value="worriedL">worriedL</option>
+			</select>
+			<br>
+			<span class="stylized">Cheeks:</span>
+			<select id="select-cheeks-her">
+				<option value="cheeks_blank" desc="">cheeks_blank</option>
+				<option value="cheeks_blush" desc="blush">cheeks_blush</option>
+			</select>
+			<br>
+			<span class="stylized">Tears:</span>
+			<select id="select-tears-her">
+				<option value="tears_blank" desc="">tears_blank</option>
+				<option value="tears_body" desc="body">tears_body</option>
+				<option value="tears_crying_blink" desc="crying_blink">tears_crying_blink</option>
+				<option value="tears_crying_side" desc="crying_side">tears_crying_side</option>
+				<option value="tears_crying" desc="crying">tears_crying</option>
+				<option value="tears_down" desc="down">tears_down</option>
+				<option value="tears_mascara_crying_blink" desc="mascara_crying_blink">tears_mascara_crying_blink</option>
+				<option value="tears_mascara_crying" desc="mascara_crying">tears_mascara_crying</option>
+				<option value="tears_mascara_soft_blink" desc="mascara_soft_blink">tears_mascara_soft_blink</option>
+				<option value="tears_mascara_soft" desc="mascara_soft">tears_mascara_soft</option>
+				<option value="tears_messy" desc="messy">tears_messy</option>
+				<option value="tears_soft_blink" desc="soft_blink">tears_soft_blink</option>
+				<option value="tears_soft" desc="soft">tears_soft</option>
+				<option value="tears_sweat" desc="sweat">tears_sweat</option>
+			</select>
+		</p>
+		<p id='astoria_buttons'>
+			<span class="stylized">Mouth:</span>
+			<select id="select-mouth-ast">
+				<option value="base">base</option>
+				<option value="angry">angry</option>
+				<option value="annoyed">annoyed</option>
+				<option value="clench">clench</option>
+				<option value="grin">grin</option>
+				<option value="horny">horny</option>
+				<option value="open">open</option>
+				<option value="scream">scream</option>
+				<option value="smile">smile</option>
+				<option value="upset">upset</option>
+			</select>
+			<br>
+			<span class="stylized">Eyebrows:</span>
+			<select id="select-eyebrows-ast">
+				<option value="base">base</option>
+				<option value="angry">angry</option>
+				<option value="worried">worried</option>
+			</select>
+			<br>
+			<span class="stylized">Eyes:</span>
+			<select id="select-eyes-ast">
+				<option value="base">base</option>
+				<option value="closed">closed</option>
+				<option value="narrow">narrow</option>
+				<option value="wink">wink</option>
+			</select>
+			<br>
+			<span class="stylized">Pupils:</span>
+			<select id="select-pupils-ast">
+				<option value="mid">mid</option>
+				<option value="L">L</option>
+				<option value="R">R</option>
+				<option value="up">up</option>
+				<option value="down">down</option>
+				<option value="ahegao">ahegao</option>
+			</select>
+			<br>
+			<span class="stylized">Cheeks:</span>
+			<select id="select-cheeks-ast">
+				<option value="cheeks_blank" desc="">cheeks_blank</option>
+				<option value="cheeks_blush" desc="blush">cheeks_blush</option>
+			</select>
+			<br>
+			<span class="stylized">Tears:</span>
+			<select id="select-tears-ast">
+				<option value="tears_blank" desc="">tears_blank</option>
+			</select>
+		</p>
+		<p id='cho_buttons'>
+			<span class="stylized">Mouth:</span>
+			<select id="select-mouth-cho">
+				<option value="base">base</option>
+				<option value="angry">angry</option>
+				<option value="annoyed">annoyed</option>
+				<option value="pout">pout</option>
+				<option value="quiver">quiver</option>
+				<option value="soft">soft</option>
+				<option value="horny">horny</option>
+				<option value="open">open</option>
+				<option value="scream">scream</option>
+				<option value="smile">smile</option>
+				<option value="upset">upset</option>
+			</select>
+			<br>
+			<span class="stylized">Eyebrows:</span>
+			<select id="select-eyebrows-cho">
+				<option value="base">base</option>
+				<option value="angry">angry</option>
+				<option value="raised">raised</option>
+				<option value="sad">sad</option>
+			</select>
+			<br>
+			<span class="stylized">Eyes:</span>
+			<select id="select-eyes-cho">
+				<option value="base">base</option>
+				<option value="closed">closed</option>
+				<option value="narrow">narrow</option>
+				<option value="wink">wink</option>
+				<option value="angry">angry</option>
+				<option value="shocked">shocked</option>
+				<option value="wide">wide</option>
+			</select>
+			<br>
+			<span class="stylized">Pupils:</span>
+			<select id="select-pupils-cho">
+				<option value="mid">mid</option>
+				<option value="L">L</option>
+				<option value="R">R</option>
+				<option value="up">up</option>
+				<option value="down">down</option>
+				<option value="downR">downR</option>
+			</select>
+			<br>
+			<span class="stylized">Cheeks:</span>
+			<select id="select-cheeks-cho">
+				<option value="cheeks_blank" desc="">cheeks_blank</option>
+				<option value="cheeks_blush" desc="blush">cheeks_blush</option>
+			</select>
+			<br>
+			<span class="stylized">Tears:</span>
+			<select id="select-tears-cho">
+				<option value="tears_blank" desc="">tears_blank</option>
+			</select>
+		</p>
+		<p id='tonks_buttons'>
+			<span class="stylized">Mouth:</span>
+			<select id="select-mouth-ton">
+				<option value="base">base</option>
+				<option value="angry">angry</option>
+				<option value="gag">gag</option>
+				<option value="quiver">quiver</option>
+				<option value="open_wide_tongue">open_wide_tongue</option>
+				<option value="horny">horny</option>
+				<option value="open">open</option>
+				<option value="scream">scream</option>
+				<option value="smile">smile</option>
+				<option value="upset">upset</option>
+			</select>
+			<br>
+			<span class="stylized">Eyebrows:</span>
+			<select id="select-eyebrows-ton">
+				<option value="base">base</option>
+				<option value="angry">angry</option>
+				<option value="raised">raised</option>
+				<option value="sad">sad</option>
+				<option value="upset">upset</option>
+				<option value="wide">wide</option>
+				<option value="worried">worried</option>
+			</select>
+			<br>
+			<span class="stylized">Eyes:</span>
+			<select id="select-eyes-ton">
+				<option value="base">base</option>
+				<option value="closed">closed</option>
+				<option value="happyCl">happyCl</option>
+				<option value="shocked">shocked</option>
+				<option value="wide">wide</option>
+			</select>
+			<br>
+			<span class="stylized">Pupils:</span>
+			<select id="select-pupils-ton">
+				<option value="mid">mid</option>
+				<option value="L">L</option>
+				<option value="R">R</option>
+				<option value="up">up</option>
+				<option value="down">down</option>
+				<option value="wide">wide</option>
+				<option value="ahegao">ahegao</option>
+				<option value="ahegao_intense">ahegao_intense</option>
+			</select>
+			<br>
+			<span class="stylized">Cheeks:</span>
+			<select id="select-cheeks-ton">
+				<option value="cheeks_blank" desc="">cheeks_blank</option>
+				<option value="cheeks_blush" desc="blush">cheeks_blush</option>
+			</select>
+			<br>
+			<span class="stylized">Tears:</span>
+			<select id="select-tears-ton">
+				<option value="tears_blank" desc="">tears_blank</option>
+				<option value="tears_mascara" desc="">tears_mascara</option>
+			</select>
+			<br>
+			<span class="stylized">Haircolor:</span>
+			<select id="select-haircolor-ton">
+				<option value="basic" desc="">basic</option>
+				<option value="angry" style="background-color:#A42222;" desc="">angry</option>
+				<option value="upset" style="background-color:#E45D22;" desc="">upset</option>
+				<option value="happy" style="background-color:#F0F032;" desc="">happy</option>
+				<option value="disgusted" style="background-color:#6FCD4B;" desc="">disgusted</option>
+				<option value="sad" style="background-color:#404BCD;" desc="">sad</option>
+				<option value="scared" style="background-color:#EEEEF1;" desc="">scared</option>
+				<option value="horny" style="background-color:#F27EA8;" desc="">horny</option>
+			</select>
+		</p>
+	</div>
+
+	<div id="charimg">
+		<div id="hermione">
+			<img id="hair-back" class="bodypart" src="../game/characters/hermione/body/head/curly_brown.png" />
+			<img id="charbody" class="bodypart" src="../game/characters/hermione/body/base/hermione_base.png" />
+			<img id="charbody" class="bodypart" src="../game/characters/hermione/body/breasts/breasts_normal_pressed.png" />
+			<img id="charbody" class="bodypart" src="../game/characters/hermione/body/arms/left/default.png" />
+			<img id="charbody" class="bodypart" src="../game/characters/hermione/body/arms/right/right_1.png" />
+			<img id="charbody" class="bodypart" src="../game/characters/hermione/body/legs/legs_1.png" />
+			<img id="charbody" class="bodypart" src="../game/characters/hermione/clothes/bottoms/skirt_2.png" />
+			<img id="charbody" class="bodypart" src="../game/characters/hermione/clothes/tops/top_6_g.png" />
+			<img id="mouth-her" class="bodypart" src="../game/characters/hermione/face/mouth/nude/base.png" />
+			<img id="eyes-her" class="bodypart" src="../game/characters/hermione/face/eyes/blue/default.png" />
+			<img id="cheeks-her" class="bodypart" src="../game/characters/hermione/face/extras/cheeks_blank.png" />
+			<img id="tears-her" class="bodypart" src="../game/characters/hermione/face/extras/tears_blank.png" />
+			<img id="hair-top" class="bodypart" src="../game/characters/hermione/body/head/curly_brown_top.png" />
+		</div>
+		<div id="astoria">
+			<img id="charbody" class="bodypart" src="../game/characters/astoria/body/base/base_01.png" />
+			<img id="charbody" class="bodypart" src="../game/characters/astoria/body/arms/l_arm_hips.png" />
+			<img id="charbody" class="bodypart" src="../game/characters/astoria/body/arms/r_arm_hips.png" />
+			<img id="charbody" class="bodypart" src="../game/characters/astoria/body/arms/armfixR.png" />
+			<img id="hair-top" class="bodypart" src="../game/characters/astoria/clothes/hair/base/skin.png" />
+			<img id="charbody" class="bodypart" src="../game/characters/astoria/body/breasts/base.png" />
+			<img id="whites-ast" class="bodypart" src="../game/characters/astoria/face/eyes/_white_.png" />
+			<img id="mouth-ast" class="bodypart" src="../game/characters/astoria/face/mouth/base.png" />
+			<img id="pupils-ast" class="bodypart" src="../game/characters/astoria/face/pupils/mid.png" />
+			<img id="eyes-ast" class="bodypart" src="../game/characters/astoria/face/eyes/base.png" />
+			<img id="eyebrows-ast" class="bodypart" src="../game/characters/astoria/face/eyebrows/base.png" />
+			<img id="cheeks-ast" class="bodypart" src="../game/characters/astoria/face/extras/cheeks_blank.png" />
+			<img id="tears-ast" class="bodypart" src="../game/characters/astoria/face/extras/tears_blank.png" />
+			<img id="hair-top" class="bodypart" src="../game/characters/astoria/clothes/hair/base/0.png" />
+			<img id="hair-top" class="bodypart" src="../game/characters/astoria/clothes/hair/base/outline.png" />
+		</div>
+		<div id="cho">
+			<img id="charbody" class="bodypart" src="../game/characters/cho/body/base/base_01.png" />
+			<img id="charbody" class="bodypart" src="../game/characters/cho/body/arms/arm_down_l.png" />
+			<img id="charbody" class="bodypart" src="../game/characters/cho/body/arms/arm_down_r.png" />
+			<img id="hair-top" class="bodypart" src="../game/characters/cho/clothes/hair/ponytail/skin.png" />
+			<img id="charbody" class="bodypart" src="../game/characters/cho/body/breasts/breasts_bikini_tan.png" />
+			<img id="whites-cho" class="bodypart" src="../game/characters/cho/face/eyes/_white_.png" />
+			<img id="mouth-cho" class="bodypart" src="../game/characters/cho/face/mouth/base.png" />
+			<img id="pupils-cho" class="bodypart" src="../game/characters/cho/face/pupils/mid.png" />
+			<img id="eyes-cho" class="bodypart" src="../game/characters/cho/face/eyes/base.png" />
+			<img id="eyebrows-cho" class="bodypart" src="../game/characters/cho/face/eyebrows/base.png" />
+			<img id="cheeks-cho" class="bodypart" src="../game/characters/cho/face/extras/cheeks_blank.png" />
+			<img id="tears-cho" class="bodypart" src="../game/characters/cho/face/extras/tears_blank.png" />
+			<img id="hair-top" class="bodypart" src="../game/characters/cho/clothes/hair/ponytail/0.png" />
+			<img id="hair-top" class="bodypart" src="../game/characters/cho/clothes/hair/ponytail/1.png" />
+			<img id="hair-top" class="bodypart" src="../game/characters/cho/clothes/hair/ponytail/outline.png" />
+		</div>
+		<div id="tonks">
+			<img id="charbody" class="bodypart" src="../game/characters/tonks/body/base/base_01.png" />
+			<img id="charbody" class="bodypart" src="../game/characters/tonks/body/arms/l_arm_hips.png" />
+			<img id="charbody" class="bodypart" src="../game/characters/tonks/body/arms/r_arm_hips.png" />
+			<img id="charbody" class="bodypart" src="../game/characters/tonks/body/breasts/base.png" />
+			<img id="whites-ton" class="bodypart" src="../game/characters/tonks/face/eyes/_white_.png" />
+			<img id="mouth-ton" class="bodypart" src="../game/characters/tonks/face/mouth/base.png" />
+			<img id="pupils-ton" class="bodypart" src="../game/characters/tonks/face/pupils/mid.png" />
+			<img id="eyes-ton" class="bodypart" src="../game/characters/tonks/face/eyes/base.png" />
+			<img id="eyebrows-ton" class="bodypart" src="../game/characters/tonks/face/eyebrows/base.png" />
+			<img id="cheeks-ton" class="bodypart" src="../game/characters/tonks/face/extras/cheeks_blank.png" />
+			<img id="tears-ton" class="bodypart" src="../game/characters/tonks/face/extras/tears_blank.png" />
+			<img id="hair-top" class="bodypart" src="../game/characters/tonks/clothes/hair/base/0.png" />
+			<img id="hair-top" class="bodypart" src="../game/characters/tonks/clothes/hair/base/outline.png" />
+		</div>
+	</div>
+
+	<div id="charspeak">
+		<div class="container" style="left:-50px;bottom:-20px" id="namebox">
+			<img src="../game/interface/frames/gold/namebox.png"/>
+			<div id="namebox_char" class="centered">Hermione</div>
+		</div>
+		<div class="container" style="left:16%;" id="saybox">
+			<img src="../game/interface/frames/gold/frame.png"/>
+			<div id="preview" class="centered"><span id="input_preview" class="input1"></span></div>
+		</div>
+	</div>
+
+<script>
+	var dialogue = $('#input1');
+	var lastaction = ''
+	var lastaction_code = ''
+	show_char($('#select-character>option:selected').text().toLowerCase());
+
+	TLN.append_line_numbers('output');
+	wrapper.style.height='394px';
+
+	function reload_cache() {
+		$("#char").text($('#select-character>option:selected').html());
+		$("#namebox_char").text($('#select-character>option:selected').html());
+		$("#input_preview").text(dialogue.val());
+
+		refresh_char();
+		refresh_code();
+	};
+
+	function parse(string) {
+		return string
+			 .replace(/&/g, "&amp;")
+			 .replace(/</g, "&lt;")
+			 .replace(/>/g, "&gt;")
+			 .replace(/\\"/g, "&quot;")
+			 .replace(/\\'/g, "&quot;")
+			 .replace(/\\n/g, "<br>")
+			 .replace(/{b}/g, "<b>")
+			 .replace(/{\/b}/g, "</b>")
+			 .replace(/{i}/g, "<i>")
+			 .replace(/{\/i}/g, "</i>")
+			 .replace(/{s}/g, "<s>")
+			 .replace(/{\/s}/g, "</s>")
+			 .replace(/{/g, "<span style='font-family: verdana;'>{")
+			 .replace(/}/g, "}</span>")
+			 .replace(/\[/g, "<span style='color: blue;'>[")
+			 .replace(/\]/g, "]</span>")
+			 .split('#')[0];
+	};
+	
+	function parse_code(string) {
+		return string
+			 .replace(/"/g, "\\\"")
+			 .replace(/'/g, "\\\"")
+			;
+	};
+
+	function refresh_code() {
+		var c = $('#select-character').val();
+		var x = parse_code((dialogue !== undefined ? dialogue.val() : ''))
+
+		data = 'call '+c+'_main\(\"'+x.split('#')[0].trim()+'\", '
+		+ 'mouth=\"' + $('#select-mouth-'+c).val() + '\"'
+		+ ', eyes=\"' + $('#select-eyes-'+c).val() + '\"'
+		+ ($('#select-pupils-'+c).val()  !== undefined ? ', pupils=\"' + $('#select-pupils-'+c).val() + '\"' : '')
+		+ ($('#select-eyebrows-'+c).val()  !== undefined ? ', eyebrows=\"' + $('#select-eyebrows-'+c).val() + '\"' : '')
+		+ ($('#select-cheeks-'+c).val()  !== "cheeks_blank" ? ', cheeks=\"' + $('#select-cheeks-'+c).val() + '\"' : '')
+		+ ($('#select-tears-'+c).val()  !== "tears_blank" ? ', tears=\"' + $('#select-tears-'+c).val() + '\"' : '')
+		+ ($('#select-haircolor-'+c).val()  !== (undefined || 'basic') ? ', hair=\"' + $('#select-haircolor-'+c).val() + '\"' : '')
+		+ '\)'
+		+ ( x.includes('#') ? ' #' + x.split('#')[1] : '')
+		;
+
+		$("#code").text(data);
+	};
+
+	function refresh_char() {
+		var c = $('#select-character>option:selected');
+		var x = $('#select-character>option:selected').val();
+
+		if (x == 'her') {
+			$('#mouth-her')[0].src = '../game/characters/hermione/face/mouth/nude/' + $('#select-mouth-her').val() + '.png';
+			$('#eyes-her')[0].src = '../game/characters/hermione/face/eyes/brown/' + $('#select-eyes-her').val() + '.png';
+			$('#cheeks-her')[0].src = '../game/characters/hermione/face/extras/' + $('#select-cheeks-her').val() + '.png';
+			$('#tears-her')[0].src = '../game/characters/hermione/face/extras/' + $('#select-tears-her').val() + '.png';
+		}
+		else if (x == 'ast') {
+			$('#mouth-ast')[0].src = '../game/characters/astoria/face/mouth/' + $('#select-mouth-ast').val() + '.png';
+			$('#eyes-ast')[0].src = '../game/characters/astoria/face/eyes/' + $('#select-eyes-ast').val() + '.png';
+			$('#eyebrows-ast')[0].src = '../game/characters/astoria/face/eyebrows/' + $('#select-eyebrows-ast').val() + '.png';
+			$('#pupils-ast')[0].src = '../game/characters/astoria/face/pupils/' + $('#select-pupils-ast').val() + '.png';
+			$('#cheeks-ast')[0].src = '../game/characters/astoria/face/extras/' + $('#select-cheeks-ast').val() + '.png';
+			$('#tears-ast')[0].src = '../game/characters/astoria/face/extras/' + $('#select-tears-ast').val() + '.png';
+		}
+		else if (x == 'cho') {
+			$('#mouth-cho')[0].src = '../game/characters/cho/face/mouth/' + $('#select-mouth-cho').val() + '.png';
+			$('#eyes-cho')[0].src = '../game/characters/cho/face/eyes/' + $('#select-eyes-cho').val() + '.png';
+			$('#eyebrows-cho')[0].src = '../game/characters/cho/face/eyebrows/' + $('#select-eyebrows-cho').val() + '.png';
+			$('#pupils-cho')[0].src = '../game/characters/cho/face/pupils/' + $('#select-pupils-cho').val() + '.png';
+			$('#cheeks-cho')[0].src = '../game/characters/cho/face/extras/' + $('#select-cheeks-cho').val() + '.png';
+			$('#tears-cho')[0].src = '../game/characters/cho/face/extras/' + $('#select-tears-cho').val() + '.png';
+		}
+		else if (x == 'ton') {
+			$('#mouth-ton')[0].src = '../game/characters/tonks/face/mouth/' + $('#select-mouth-ton').val() + '.png';
+			$('#eyes-ton')[0].src = '../game/characters/tonks/face/eyes/' + $('#select-eyes-ton').val() + '.png';
+			$('#eyebrows-ton')[0].src = '../game/characters/tonks/face/eyebrows/' + $('#select-eyebrows-ton').val() + '.png';
+			$('#pupils-ton')[0].src = '../game/characters/tonks/face/pupils/' + $('#select-pupils-ton').val() + '.png';
+			$('#cheeks-ton')[0].src = '../game/characters/tonks/face/extras/' + $('#select-cheeks-ton').val() + '.png';
+			$('#tears-ton')[0].src = '../game/characters/tonks/face/extras/' + $('#select-tears-ton').val() + '.png';
+		};
+	};
+
+	function show_char(y, z=true) {
+		var x = document.getElementById(y);
+		var c = document.getElementById(y+'_buttons');
+		if (z == true) {
+			document.getElementById('hermione').style.display = "none";
+			document.getElementById('hermione_buttons').style.display = "none";
+			document.getElementById('astoria').style.display = "none";
+			document.getElementById('astoria_buttons').style.display = "none";
+			document.getElementById('cho').style.display = "none";
+			document.getElementById('cho_buttons').style.display = "none";
+			document.getElementById('tonks').style.display = "none";
+			document.getElementById('tonks_buttons').style.display = "none";
+
+			x.style.display = "block";
+			c.style.display = "block";
+		} else {
+			x.style.display = "none";
+		};
+		refresh_char();
+	};
+
+	$('#select-character').change(function(){
+	$("#char").text($('#select-character>option:selected').html());
+	$("#namebox_char").text($('#select-character>option:selected').html());
+	show_char($('#select-character>option:selected').text().toLowerCase());
+	refresh_code();
+	});
+	
+	
+	
+
+    $('#select-mouth-her').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+    $('#select-eyes-her').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+    $('#select-cheeks-her').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+    $('#select-tears-her').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+	
+	
+	
+
+    $('#select-mouth-ast').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+    $('#select-eyes-ast').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+
+    $('#select-eyebrows-ast').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+
+    $('#select-pupils-ast').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+
+    $('#select-cheeks-ast').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+    $('#select-tears-ast').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+	
+	
+	
+	
+	$('#select-mouth-cho').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+    $('#select-eyes-cho').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+
+    $('#select-eyebrows-cho').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+
+    $('#select-pupils-cho').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+
+    $('#select-cheeks-cho').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+    $('#select-tears-cho').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+	
+	
+	
+	$('#select-mouth-ton').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+    $('#select-eyes-ton').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+
+    $('#select-eyebrows-ton').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+
+    $('#select-pupils-ton').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+
+    $('#select-cheeks-ton').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+    $('#select-tears-ton').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+	
+	$('#select-haircolor-ton').change(function(){
+	refresh_char();
+	refresh_code();
+	});
+
+	$("#input1").keypress(function(event) {
+			if(event.which == '13') {
+				return false;
+			}
+		});
+		
+	$('.input').keyup(function(event){
+		if(event.which == '13') {
+			commit();
+		}
+		
+		var $this = $(this);
+		dialogue = $(this);
+		$('.'+$this.attr('id')+'').html(($this.val()  !== '' ? parse($this.val()) : '...'));
+		refresh_code();
+		
+		$("#input1").keypress(function(event) {
+			if(event.which == '13') {
+				return false;
+			}
+		});
+	});
+	
+	function commit() {
+		$("#output").val($("#output").val() +$("#code").text() + '\n');
+		TLN.remove_line_numbers('output');
+		TLN.append_line_numbers('output');
+		
+		lastaction = $("#input1").val()
+		lastaction_code = $("#output").val() +$("#code").text() + '\n'
+		$("#input1").val('');
+	}
+	
+	function clear_history() {
+		if ($("#output").val() !== '') {
+			if (confirm("Are you sure?") == true) {
+				$("#output").val('');
+				TLN.remove_line_numbers('output');
+				TLN.append_line_numbers('output');
+			}
+		}
+	};
+	
+	function download() {
+		var d = new Date()
+		var text = $("#output").val();
+		text = text.replace(/\n/g, "\r\n");
+		var blob = new Blob([text], { type: "text/rpy"});
+		var anchor = document.createElement("a");
+		anchor.download = $('#select-character>option:selected').val()+"_dialogues_"+d.getDate().toString()+"-"+(d.getMonth()+1).toString()+"-"+d.getFullYear()+".rpy";
+		anchor.href = window.URL.createObjectURL(blob);
+		anchor.target = "_blank";
+		anchor.style.display = "none";
+		document.body.appendChild(anchor);
+		anchor.click();
+		document.body.removeChild(anchor);
+	};
+	
+	function undo_last() {
+		if (lastaction !== '') {
+			$("#input1").val(lastaction);
+			refresh_code();
+			
+			// $("#output").val($("#output").val());
+		    // TLN.remove_line_numbers('output');
+			// TLN.append_line_numbers('output');
+			
+			lastaction = '';
+			lastaction_code = '';
+		}
+	};
+	
+	function copy_code(id) {
+		var copyText = document.getElementById(id);
+		copyText.select();
+		copyText.setSelectionRange(0, 99999);
+		document.execCommand("copy");
+	}
+</script>
+</body>
+</html>
